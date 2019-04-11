@@ -18,9 +18,27 @@ class Command
         jobNumber = 0;
     }
 
-    void setInput( char * inStr )
+    void setInput( const char * inStr )
     {
-        strcpy( inStr, inputStr );
+        char * end;
+        int i = 1;
+        strcpy( inputStr, inStr );
+
+        inputArray[0] = inputStr;
+        end = inputStr;
+
+        while( *end != '\0' )
+        {
+            if( *end == ' ' || *end == '\n' )
+            {
+                *end = '\0';
+                inputArray[i++] = ++end;
+            } 
+            else
+            {
+                end++;
+            }
+        }
     }
 
     void execute(void)
@@ -47,6 +65,8 @@ class Shell
         currentCmd.setInput( inString );
     }
 };
+
+
 
 int main( int argc, char * argv[] )
 {
