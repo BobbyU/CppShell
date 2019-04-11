@@ -8,10 +8,13 @@ class Command
     int jobNumber;
     
     public:
-    void Command(void)
+    Command(void)
     {
         program = NULL;
-        inputArray = NULL;
+        for( int i = 0; i < MAX_ARG_SIZE; i++ )
+        {
+            inputArray[i] = NULL;
+        }
         jobNumber = 0;
     }
 
@@ -35,8 +38,8 @@ class Shell
     void getInput( void )
     {
         printf( "$>" );
-        fgets( strBuff, MAX_BUF_SIZE, stdin );
-        moveInputToCommand( strBuff );
+        fgets( strBuf, MAX_BUF_SIZE, stdin );
+        moveInputToCommand( strBuf );
     }
 
     void moveInputToCommand( char * inString )
