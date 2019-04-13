@@ -1,4 +1,5 @@
 shell
 *.out
 *~
-*.sqp
+*.swp
+*.gch

@@ -1,7 +1,7 @@
 # CppShell
 A shell implementation in C++, with a focus on OOP
 
-Coming from a procedural background, I'm trying to get the hang of objects anc C++ in general.
+Coming from a procedural background, I'm trying to get the hang of objects and C++ in general.
 
 TODO List:
 * Successfully execute a program
