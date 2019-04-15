@@ -72,11 +72,16 @@ class Command
     {
         // Execute the command in inputArray
         if( path == NULL )
+        {
             // don't do anything if no path is given
             // since we are in the child process, kill yourself
             exit(0);
+        }
 
-        execv( path, inputArray );
+        if( execvp( path, inputArray ) == -1 )
+        {
+            cerr << "Could not find the program: " << path << endl;
+        }
     }
 };
 
@@ -103,10 +108,20 @@ class Shell
 
     void forkAndExecute()
     {
+        pid_t pid;
+        pid = fork();
+
         // Executes the current cmd
-        if( fork() == 0 )
+        switch( (int) pid )
         {
-            currentCmd.execute();
+            case -1:
+                cerr << "Error in fork" << endl;
+                break;
+            case 0:
+                currentCmd.execute();
+                break;
+            //default:
+                // do nothing, we are in the parent (shell) process
         }
     }
 };

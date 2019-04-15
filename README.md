@@ -8,3 +8,4 @@ TODO List:
 * I/O redirection
 * Signal redirection
 * Implement jobs and background jobs
+* Correctly reap child tasks
