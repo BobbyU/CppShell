@@ -1,3 +1,5 @@
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <iostream>
 //#include <cstdlib>
 #include <unistd.h>

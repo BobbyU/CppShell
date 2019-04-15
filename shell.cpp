@@ -109,6 +109,7 @@ class Shell
     void forkAndExecute()
     {
         pid_t pid;
+        int status;
         pid = fork();
 
         // Executes the current cmd
@@ -120,8 +121,15 @@ class Shell
             case 0:
                 currentCmd.execute();
                 break;
-            //default:
-                // do nothing, we are in the parent (shell) process
+            default:
+                wait( &status );
+                /*
+                // currently, no error handling, but it might be useful later
+                if( WIFEXITED( status ) )
+                {
+                    cout << "";
+                }
+                */
         }
     }
 };
