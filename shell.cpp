@@ -88,25 +88,20 @@ class Command
 class Shell
 {
     string strBuf;
+    Command *foregroundTask;
     //char strBuf[MAX_BUF_SIZE];
-    Command currentCmd;
 
     public:
     void getInput( void )
     {
         // Gets an input from the user, and creates a command based on it
+        foregroundTask = new Command();
         cout << "$>";
         getline( cin, strBuf );
-        moveInputToCommand( strBuf );
+        foregroundTask->setInput( strBuf );
     }
 
-    void moveInputToCommand( string inString )
-    {
-        // Creates a new command object based on the input
-        currentCmd.setInput( inString );
-    }
-
-    void forkAndExecute()
+    void forkAndExecute( )
     {
         pid_t pid;
         int status;
@@ -119,7 +114,7 @@ class Shell
                 cerr << "Error in fork" << endl;
                 break;
             case 0:
-                currentCmd.execute();
+                foregroundTask->execute();
                 break;
             default:
                 wait( &status );
@@ -131,6 +126,11 @@ class Shell
                 }
                 */
         }
+    }
+
+    void cleanup( )
+    {
+        delete foregroundTask;
     }
 };
 
@@ -144,6 +144,7 @@ int main( int argc, char * argv[] )
     {
         activeShell.getInput();
         activeShell.forkAndExecute();
+        activeShell.cleanup();
     }
 }
 
