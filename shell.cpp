@@ -103,9 +103,7 @@ class Shell
 
     void forkAndExecute( )
     {
-        pid_t pid;
-        int status;
-        pid = fork();
+        pid_t pid = fork();
 
         // Executes the current cmd
         switch( (int) pid )
@@ -116,20 +114,21 @@ class Shell
             case 0:
                 foregroundTask->execute();
                 break;
-            default:
-                wait( &status );
-                /*
-                // currently, no error handling, but it might be useful later
-                if( WIFEXITED( status ) )
-                {
-                    cout << "";
-                }
-                */
         }
     }
 
     void cleanup( )
     {
+        int status;
+
+        wait( &status );
+        /*
+        // currently, no error handling, but it might be useful later
+        if( WIFEXITED( status ) )
+        {
+            cout << "";
+        }
+        */
         delete foregroundTask;
     }
 };
