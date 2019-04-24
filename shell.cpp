@@ -22,12 +22,12 @@ class Command
         pid = 0;
     }
 
-    void setInput( string inStr )
+    void setInput( char* inStr )
     {
         // Parses inStr and populates inputArray and path accordingly
         char * end;
         int i = 1;
-        strcpy( inputStr, inStr.c_str() );
+        strcpy( inputStr, inStr );
 
         if( *inputStr == '\n' )
             // No input, just return
@@ -104,7 +104,7 @@ class Command
 
 class Shell
 {
-    string strBuf;
+    char strBuf[MAX_BUF_SIZE];
     Command *foregroundTask;
     int numberOfChildren;
 
@@ -114,7 +114,7 @@ class Shell
         // Gets an input from the user, and creates a command based on it
         foregroundTask = new Command();
         cout << "$>";
-        getline( cin, strBuf );
+        cin.getline( strBuf, MAX_BUF_SIZE );
         if( cin.eof() )
             exit(0);
         foregroundTask->setInput( strBuf );
@@ -195,7 +195,7 @@ int main( int argc, char * argv[] )
     int i = 0;
     setSignals();
 
-    while( i<10 )
+    while( TRUE )
     {
         activeShell.getInput();
         if( activeShell.isValidInput() )
