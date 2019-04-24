@@ -216,7 +216,8 @@ void setSignals( void )
 }
 
 /*
-lets do signal redirection next
-SIGINT should be sent to child
-EOF character should terminate the terminal
+lets do job control next
+I think we need to keep track of multiple tasks before we
+can implement I/O redirection
+At least, it will be nice to have
 */
