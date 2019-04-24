@@ -6,6 +6,7 @@ class Command
     char * inputArray[MAX_ARG_SIZE];
     char inputStr[MAX_BUF_SIZE];
     int arguments;
+    pid_t pid;
     int jobNumber;
     
     public:
@@ -18,6 +19,7 @@ class Command
         }
         jobNumber = 0;
         arguments = 0;
+        pid = 0;
     }
 
     void setInput( string inStr )
@@ -83,13 +85,28 @@ class Command
             cerr << "Could not find the program: " << path << endl;
         }
     }
+
+    pid_t getPid( void )
+    {
+        return pid;
+    }
+
+    void setPid( pid_t pd )
+    {
+        pid = pd;
+    }
+
+    const char *getPath( void )
+    {
+        return path;
+    }
 };
 
 class Shell
 {
     string strBuf;
     Command *foregroundTask;
-    //char strBuf[MAX_BUF_SIZE];
+    int numberOfChildren;
 
     public:
     void getInput( void )
@@ -98,7 +115,24 @@ class Shell
         foregroundTask = new Command();
         cout << "$>";
         getline( cin, strBuf );
+        if( cin.eof() )
+            exit(0);
         foregroundTask->setInput( strBuf );
+    }
+
+    Boolean isValidInput( void )
+    {
+        switch( *foregroundTask->getPath() )
+        {
+            case '\0':
+            case '\n':
+                return FALSE;
+            case EOF:
+                exit( 0 );
+        }
+
+        // If we aren't an invalid case, then must be valid
+        return TRUE;
     }
 
     void forkAndExecute( )
@@ -114,6 +148,9 @@ class Shell
             case 0:
                 foregroundTask->execute();
                 break;
+            default:
+                foregroundTask->setPid( pid );
+                numberOfChildren++;
         }
     }
 
@@ -131,25 +168,55 @@ class Shell
         */
         delete foregroundTask;
     }
+
+    pid_t getForegroundPid( void )
+    {
+        return foregroundTask->getPid( );
+    }
 };
 
+Shell activeShell;
 
-
-int main( int argc, char * argv[] )
+void sigIntHandler( int sig )
 {
-    Shell activeShell;
+    // If we get SIGINT, send it to the child process (if there is one)
+    // We are killed by EOF signal
 
-    while( 1 )
+    pid_t fPid = activeShell.getForegroundPid( );
+    if( fPid != 0 )
     {
-        activeShell.getInput();
-        activeShell.forkAndExecute();
-        activeShell.cleanup();
+        kill( fPid, SIGINT );
+        cout << endl; //not sure if this is good, will think about it
     }
 }
 
-/*
-command object?
-helpful for background tasks
+int main( int argc, char * argv[] )
+{
+    int i = 0;
+    setSignals();
 
-lets implement it, barebones, and build on its functionality later
+    while( i<10 )
+    {
+        activeShell.getInput();
+        if( activeShell.isValidInput() )
+        {
+            activeShell.forkAndExecute();
+            activeShell.cleanup();
+        }
+        i++;
+    }
+}
+
+void setSignals( void )
+{
+    struct sigaction sa;
+
+    sa.sa_handler = sigIntHandler;
+    sigaction( SIGINT, &sa, NULL );
+}
+
+/*
+lets do signal redirection next
+SIGINT should be sent to child
+EOF character should terminate the terminal
 */
